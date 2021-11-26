@@ -1,6 +1,5 @@
 #include <Real.h>
 
-
 class Sandbox : public Real::Application
 {
 public:
