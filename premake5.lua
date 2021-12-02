@@ -10,6 +10,12 @@ workspace "Real"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+IncludeDir = {}
+IncludeDir["GLFW"] = "Real/vendor/GLFW/include"
+
+include "Real/vendor/GLFW"
+
+
 project "Real"
 	location "Real"
 	kind "SharedLib"
@@ -17,6 +23,9 @@ project "Real"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	pchheader "pch.h"
+	pchsource "Real/src/pch.cpp"
 
 	files
 	{
@@ -26,9 +35,17 @@ project "Real"
 
 	includedirs
 	{
-		"Real/src",
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/src",
+		"%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}"
 	}
+
+	links
+	{
+		"GLFW",
+		"opengl32.lib"
+	}
+
 
 	filter "system:windows"
 		cppdialect "C++17"
@@ -48,14 +65,17 @@ project "Real"
 
 	filter "configurations:Debug"
 		defines "RL_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "RL_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "RL_DIST"
+		buildoptions "/MD"
 		optimize "On"
 
 project "Sandbox"
@@ -95,12 +115,15 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "RL_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "RL_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "RL_DIST"
+		buildoptions "/MD"
 		optimize "On"
